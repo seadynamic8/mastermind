@@ -27,9 +27,10 @@ module Mastermind
 		def get_player_role
 			puts "Role: codebreaker(1) or codemaker(2) or quit(q): "
 			role = gets.chomp
-			if role == "1"
+			case role
+			when "1"
 				:breaker
-			elsif role == "2"
+			when "2"
 				:maker
 			else
 				:quit

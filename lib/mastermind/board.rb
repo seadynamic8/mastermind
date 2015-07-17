@@ -3,9 +3,9 @@ module Mastermind
 		attr_accessor :code, :scores, :turns, :matches
 
 		def initialize(args = {})
-			@code   = args.fetch(:code, generate_code)
-			@scores = [0, 0]
-			@turns = []
+			@code    = args.fetch(:code, generate_code)
+			@scores  = [0, 0]
+			@turns   = []
 			@matches = {}
 		end
 
@@ -19,11 +19,10 @@ module Mastermind
 		def compare_codes(guess)
 			result = []
 
-			self.matches = find_matches(guess)
-			matches.each { |slot| result << :black }
+			self.matches = exact_matches(guess)
+			matches.each { result << :black }
 
-			rest = code - matches.values
-			uniq_similars = rest & guess
+			uniq_similars = correct_but_wrong_position(guess)
 			uniq_similars.each { result << :white }
 
 			self.turns << {guess: guess, result: result}
@@ -40,7 +39,7 @@ module Mastermind
 					if matches.keys.include? index
 						guess[index] = matches[index]
 					else
-						guess[index] = rand(6) + 1
+						guess[index] = random_slot
 					end
 					guess
 				end
@@ -53,7 +52,7 @@ module Mastermind
 			turns.each.with_index do |turn, index|
 				print "#{index + 1}.".ljust(4)
 				puts "Guess: #{turn[:guess].inspect} "\
-						 "Result: #{turn[:result].inspect}"
+						 		"Result: #{turn[:result].inspect}"
 			end
 		end
 		
@@ -61,18 +60,24 @@ module Mastermind
 			puts "Score = Player1: #{@scores[0]} Player2: #{@scores[1]}"
 		end
 
-		def find_matches(guess)
+		def exact_matches(guess)
  			code.each.with_index.reduce({}) do |matches, (slot, pos)|
 				matches[pos] = slot if slot == guess[pos]
 				matches
 			end
 		end
 
+		def correct_but_wrong_position(guess)
+			rest_of_code_to_check = (code - matches.values)
+			rest_of_code_to_check & guess
+		end
+
 		def generate_code
-			4.times.reduce([]) do |code|
-				rand_num = rand(6) + 1
-				code << rand_num
-			end
+			4.times.reduce([]) { |code| code << random_slot }
+		end
+
+		def random_slot
+			rand(6) + 1
 		end
 	end
 end
