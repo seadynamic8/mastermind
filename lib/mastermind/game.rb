@@ -6,35 +6,50 @@ module Mastermind
 		def initialize(args = {})
 			@role = :breaker
 			@board  = args.fetch(:board, Board.new)
+			@player = :user
 		end
 
 		def play
 			puts "Welcome to Mastermind!"
 			puts ""
-
+			self.role = get_initial_role
 			loop do
-				self.role = get_player_role
-
-				break if role == :quit
-
 				board.code = get_code if role == :maker
 				play_round(role)
+				change_player
+				change_role
+				break unless next_round_or_quit
 			end
 		end
 
 		private
 
-		def get_player_role
+		def get_initial_role
 			puts "Role: codebreaker(1) or codemaker(2) or quit(q): "
 			role = gets.chomp
 			case role
 			when "1"
 				:breaker
 			when "2"
+				self.player = :computer
 				:maker
 			else
-				:quit
+				exit
 			end
+		end
+
+		def next_round_or_quit
+			puts "Continue next round(c) or quit(q): "
+			case gets.chomp
+			when "c"
+				true
+			else
+				exit
+			end
+		end
+
+		def change_role
+			self.role = (role == :breaker) ? :maker : :breaker
 		end
 
 		def get_code
@@ -47,11 +62,14 @@ module Mastermind
 			loop do
 				count +=1
 				guess = (role == :maker) ? board.guess_code : get_guess
-				break if board.compare_codes(guess) or count == 12
+				board.compare_codes(guess)
+				(count == 12) ? increase_other_score(2) : increase_other_score
 				board.display
+				break if board.codes_match(guess) or count == 12
 			end
 
 			print_finish_round(count)
+			board.turns = []
 		end
 
 		def get_guess
@@ -70,14 +88,25 @@ module Mastermind
 			guess
 		end
 
+		def increase_other_score(amount = 1)
+			if player == :user
+				board.scores[:computer] += amount
+			else
+				board.scores[:user] += amount
+			end
+		end
+
 		def print_finish_round(count)
 			if count == 12
-				puts "Sorry, you ran out of tries"
+				puts "Sorry, #{player} ran out of tries."
 			else
-				puts "Won this round."
+				puts "#{player.to_s.capitalize}: Won this round."
 			end
-			board.display
-			board.turns = []
+			puts ""
+		end
+
+		def change_player
+			self.player = (player == :user) ? :computer : :user
 		end
 
 		def correct_range?(guess)

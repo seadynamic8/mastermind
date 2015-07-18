@@ -4,7 +4,7 @@ module Mastermind
 
 		def initialize(args = {})
 			@code    = args.fetch(:code, generate_code)
-			@scores  = [0, 0]
+			@scores  = {user: 0, computer: 0}
 			@turns   = []
 			@matches = {}
 		end
@@ -26,8 +26,9 @@ module Mastermind
 			uniq_similars.each { result << :white }
 
 			self.turns << {guess: guess, result: result}
-			self.scores[1] += 1
+		end
 
+		def codes_match(guess)
 			(guess == code) ? true : false
 		end
 
@@ -57,7 +58,7 @@ module Mastermind
 		end
 		
 		def show_scores
-			puts "Score = Player1: #{@scores[0]} Player2: #{@scores[1]}"
+			puts "Score = User: #{@scores[:user]} Computer: #{@scores[:computer]}"
 		end
 
 		def exact_matches(guess)
