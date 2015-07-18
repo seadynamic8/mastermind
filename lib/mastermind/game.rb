@@ -65,10 +65,11 @@ module Mastermind
 				board.compare_codes(guess)
 				(count == 12) ? increase_other_score(2) : increase_other_score
 				board.display
-				break if board.codes_match(guess) or count == 12
+				if match = board.codes_match(guess) or count == 12
+					print_finish_round(match, count)
+					break
+				end
 			end
-
-			print_finish_round(count)
 			board.turns = []
 		end
 
@@ -96,8 +97,8 @@ module Mastermind
 			end
 		end
 
-		def print_finish_round(count)
-			if count == 12
+		def print_finish_round(match, count)
+			if count == 12 and not match
 				puts "Sorry, #{player} ran out of tries."
 			else
 				puts "#{player.to_s.capitalize}: Won this round."
