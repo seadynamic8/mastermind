@@ -100,8 +100,8 @@ module Mastermind
 		end
 
 		def change_player
-			self.player = (player == :user) ? :computer : :user
-			self.role = (role == :breaker) ? :maker : :breaker
+			self.player = (player == :user)    ? :computer : :user
+			self.role   = (role   == :breaker) ? :maker    : :breaker
 		end
 
 		def correct_range?(guess)

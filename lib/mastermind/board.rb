@@ -3,10 +3,10 @@ module Mastermind
 		attr_accessor :code, :scores, :turns, :matches, :similars
 
 		def initialize(args = {})
-			@code    = args.fetch(:code, generate_code)
-			@scores  = {user: 0, computer: 0}
-			@turns   = []
-			@matches = {}
+			@code     = args.fetch(:code, generate_code)
+			@scores   = {user: 0, computer: 0}
+			@turns    = []
+			@matches  = {}
 			@similars = []
 		end
 
