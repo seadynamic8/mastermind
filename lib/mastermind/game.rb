@@ -25,7 +25,7 @@ module Mastermind
 		private
 
 		def get_initial_role
-			puts "Role: codebreaker(1) or codemaker(2) or quit(q): "
+			print "Role: codebreaker(1) or codemaker(2) or quit(q): "
 			role = gets.chomp
 			case role
 			when "1"
@@ -39,7 +39,7 @@ module Mastermind
 		end
 
 		def next_round_or_quit
-			puts "Continue next round(c) or quit(q): "
+			print "Continue next round(c) or quit(q): "
 			case gets.chomp
 			when "c"
 				true
@@ -53,7 +53,7 @@ module Mastermind
 		end
 
 		def get_code
-			puts "Secret code (1 to 6, seperated by spaces, 4 slots): "
+			print "Secret code (1 to 6, seperated by spaces, 4 slots): "
 			gets.chomp.split(" ").map(&:to_i)
 		end
 
