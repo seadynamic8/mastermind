@@ -1,12 +1,13 @@
 module Mastermind
 	class Board
-		attr_accessor :code, :scores, :turns, :matches
+		attr_accessor :code, :scores, :turns, :matches, :similars
 
 		def initialize(args = {})
 			@code    = args.fetch(:code, generate_code)
 			@scores  = {user: 0, computer: 0}
 			@turns   = []
 			@matches = {}
+			@similars = []
 		end
 
 		def display
@@ -22,8 +23,8 @@ module Mastermind
 			self.matches = exact_matches(guess)
 			matches.each { result << :black }
 
-			uniq_similars = correct_but_wrong_position(guess)
-			uniq_similars.each { result << :white }
+			self.similars = correct_but_wrong_position(guess)
+			similars.each { result << :white }
 
 			self.turns << {guess: guess, result: result}
 		end
@@ -39,6 +40,8 @@ module Mastermind
 				4.times.reduce([]) do |guess, index|
 					if matches.keys.include? index
 						guess[index] = matches[index]
+					elsif not similars.empty?
+						guess[index] = similars.shuffle.shift
 					else
 						guess[index] = random_slot
 					end
