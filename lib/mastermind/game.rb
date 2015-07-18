@@ -4,9 +4,9 @@ module Mastermind
 		attr_accessor :player, :role
 		
 		def initialize(args = {})
-			@role = :breaker
 			@board  = args.fetch(:board, Board.new)
 			@player = :user
+			@role   = :breaker
 		end
 
 		def play
@@ -17,7 +17,6 @@ module Mastermind
 				board.code = get_code if role == :maker
 				play_round(role)
 				change_player
-				change_role
 				break unless next_round_or_quit
 			end
 		end
@@ -48,19 +47,13 @@ module Mastermind
 			end
 		end
 
-		def change_role
-			self.role = (role == :breaker) ? :maker : :breaker
-		end
-
 		def get_code
 			print "Secret code (1 to 6, seperated by spaces, 4 slots): "
 			gets.chomp.split(" ").map(&:to_i)
 		end
 
 		def play_round(role)
-			count = 0
-			loop do
-				count +=1
+			(1..12).each do |count|
 				guess = (role == :maker) ? board.guess_code : get_guess
 				board.compare_codes(guess)
 				(count == 12) ? increase_other_score(2) : increase_other_score
@@ -108,6 +101,7 @@ module Mastermind
 
 		def change_player
 			self.player = (player == :user) ? :computer : :user
+			self.role = (role == :breaker) ? :maker : :breaker
 		end
 
 		def correct_range?(guess)
